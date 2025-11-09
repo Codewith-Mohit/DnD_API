@@ -1,25 +1,55 @@
-﻿using DnD_API.Services.Interfaces;
+﻿using DnD_API.Models;
+using DnD_API.Services.Interfaces;
 using System.Text.RegularExpressions;
 
 namespace DnD_API.Services
 {
     public class DiceService : IDiceService
     {
+        //It is lightweight parser. It handles common forms like "2d6+1" or "1d20-2". It can be extended if needed.
         private static readonly Regex DiceRegex = new(@"(\d*)d(\d+)([+-]\d+)?", RegexOptions.Compiled);
 
-        public int Roll(string formula, int? seed = null)
+        public DiceRollResult Roll(string formula, int? seed = null)
         {
-            var match = DiceRegex.Match(formula);
-            if (!match.Success) throw new ArgumentException("Invalid dice formula");
+            // Very small parser: supports [XdY][+/-Z], e.g., "2d6+1", "1d20-2"
+            if (string.IsNullOrWhiteSpace(formula))
+                throw new ArgumentException("Formula is required");
 
-            int count = string.IsNullOrEmpty(match.Groups[1].Value) ? 1 : int.Parse(match.Groups[1].Value);
-            int sides = int.Parse(match.Groups[2].Value);
-            int modifier = string.IsNullOrEmpty(match.Groups[3].Value) ? 0 : int.Parse(match.Groups[3].Value);
+            int total = 0;
+            var rng = seed.HasValue ? new System.Random(seed.Value) : new System.Random();
 
-            var rng = seed.HasValue ? new Random(seed.Value) : new Random();
-            int result = Enumerable.Range(0, count).Sum(_ => rng.Next(1, sides + 1)) + modifier;
+            // parse
+            int dIndex = formula.IndexOf('d');
+            if (dIndex <= 0)
+                throw new ArgumentException("Invalid formula");
 
-            return result;
+            int numDice = int.Parse(formula.Substring(0, dIndex));
+            int sides = int.Parse(new string(formula.Skip(dIndex + 1).TakeWhile(char.IsDigit).ToArray()));
+
+            int offsetIndex = formula.IndexOfAny(new[] { '+', '-' });
+            int modifier = 0;
+            if (offsetIndex >= 0)
+            {
+                var modPart = formula.Substring(offsetIndex);
+                modifier = int.Parse(modPart);
+            }
+
+            var dice = new List<int>();
+            for (int i = 0; i < numDice; i++)
+            {
+                int roll = rng.Next(1, sides + 1);
+                dice.Add(roll);
+                total += roll;
+            }
+            total += modifier;
+
+            return new DiceRollResult
+            {
+                Formula = formula,
+                Result = total,
+                Dice = dice,
+                Modifier = modifier
+            };
         }
     }
 }

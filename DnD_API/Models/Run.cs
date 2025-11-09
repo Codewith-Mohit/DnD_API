@@ -11,11 +11,4 @@
         public int Seed { get; set; } = new Random().Next();
         public List<RunLogEntry> Log { get; set; } = new();
     }
-
-    public class RunLogEntry
-    {
-        public DateTime Ts { get; set; }
-        public string Event { get; set; }
-        public int Roll { get; set; }
-    }
 }

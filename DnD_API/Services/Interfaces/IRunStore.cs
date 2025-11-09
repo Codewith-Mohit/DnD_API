@@ -19,7 +19,7 @@ namespace DnD_API.Services.Interfaces
        
         public void Create(Run r) { _dbContext.Runs.Add(r); _dbContext.SaveChanges(); }
         public Run? Get(string? id) => _dbContext?.Runs?.FirstOrDefault(r => r.Id == id);
-        public void Update(Run r) { _dbContext?.Runs.Update(r); _dbContext.SaveChanges(); }
+        public void Update(Run r) { _dbContext?.Runs.Update(r); _dbContext?.SaveChanges(); }
         public void Delete(string id) { _dbContext?.Runs.Remove(Get(id)); _dbContext?.SaveChanges(); }
     }
 }

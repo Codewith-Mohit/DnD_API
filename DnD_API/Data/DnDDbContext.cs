@@ -14,19 +14,18 @@ namespace DnD_API.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Run.Log is a collection of RunLogEntry (DiceRollResult owned)
+            modelBuilder.Owned<DiceRollResult>();
+            
             modelBuilder.Entity<Run>(rb =>
             {
                 rb.OwnsMany(r => r.Log, lb => lb.WithOwner().HasForeignKey("RunId"));                
             });
 
-            // Room.Encounter with Enemies as owned collection
             modelBuilder.Entity<Room>(rb =>
             {
                 rb.OwnsOne(r => r.Encounter, eb => eb.OwnsMany(e => e.Enemies));
             });
-
-            // Basic key for Item
+            
             modelBuilder.Entity<Item>().HasKey(i => i.Id);
 
             base.OnModelCreating(modelBuilder);
