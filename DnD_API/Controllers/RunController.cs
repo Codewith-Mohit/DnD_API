@@ -87,8 +87,7 @@ namespace DnD_API.Controllers
         public IActionResult Flee(string id, RunService runService)
         {
             var res = runService.Flee(id);
-            if (res) return BadRequest(res);
-            return Ok(res);
+            return Ok("Not Implemented Yet...");
         }
 
         //abort
@@ -96,9 +95,7 @@ namespace DnD_API.Controllers
         public IActionResult AbortRun(string id, RunService runService)
         {
             var result = runService.Abort(id);
-            if (result) return NotFound(result);
-            return Ok(result);
-
+            return Ok("Not Implemented Yet...");
         }
     }
 }
