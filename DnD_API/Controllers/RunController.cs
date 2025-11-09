@@ -7,8 +7,7 @@ using System.Text;
 
 namespace DnD_API.Controllers
 {
-    [ApiController]
-    [Route("runs")]
+    [ApiController]  
     public class RunsController : ControllerBase
     {
         private readonly RunService _runs;
@@ -20,6 +19,7 @@ namespace DnD_API.Controllers
         }
 
         [HttpPost]
+        [Route("runs")]
         public IActionResult CreateRun([FromBody] RunCreateDto dto)
         {
             var run = _runs.CreateRun(dto.CharacterId, dto.Seed);
@@ -30,57 +30,25 @@ namespace DnD_API.Controllers
         public IActionResult GetRun(string id)
         {
             var r = _runStore.Get(id);
-            return r != null ? Ok(r) : NotFound();
-        }
-
-        [HttpPost]
-        [Route("start")]
-        public IActionResult StartRun(RunCreateDto dto, IRunStore runStore, ICharacterServices charStore, DungeonService dungeon)
-        {
-            var character = charStore.GetCharacter(dto.CharacterId);
-            if (character == null)
-                throw new ArgumentException("Invalid character ID");
-
-
-            var run = new Run
-            {
-                Id = Guid.NewGuid().ToString(),
-                CharacterId = dto.CharacterId,
-                StartedAt = DateTime.UtcNow,
-                Status = "In_progress",
-                CurrentRoomId = null,
-                DiscoveredRoomIds = new List<string>(),
-                Seed = dto.Seed ?? new Random().Next(),
-                Log = new List<RunLogEntry>
-                {
-                    new RunLogEntry { Ts = DateTime.UtcNow, Event = $"Run started for character {character.Name}" }
-                }
-            };
-
-            var firstRoom = dungeon.GenerateInitialRoom(run.Seed);
-            run.CurrentRoomId = firstRoom.Id;
-            run.DiscoveredRoomIds.Add(firstRoom.Id);
-            run.Log.Add(new RunLogEntry { Ts = DateTime.UtcNow, Event = $"Started run in room {firstRoom.Id}" });
-
-            runStore.Create(run);
-            return CreatedAtAction(nameof(GetRun), new { id = run.Id }, run);
+            return r != null ? Ok($"Player :{r.CharacterId} is active with Run {r.Id} in Room {r.CurrentRoomId}") : NotFound();
         }
 
         [HttpPost("{id}/explore")]
         public IActionResult Explore(string id, RunExploreRequest req)
         {
             var result = _runs.Explore(id);
-            if (result.IsError) NotFound(result.ErrorMessage);
+            if (result.IsError) NotFound($"{result.ErrorMessage}");
 
-            return Ok(result);
+            dynamic data = result.Data;
+            return Ok( $"Exploring through {data.runId} and moving to next room {data.currentRoom}");
         }
 
         [HttpPost("{id}/encounter/roll")]
         public IActionResult ResolveEncounter(string id, DiceRollRequest req, RunService runService)
         {
             var result = runService.ResolveEncounter(id, req);
-            if (result.IsError) return NotFound(result.ErrorMessage);
-            return Ok(result);
+            if (result.IsError) return NotFound(result.Msgs);
+            return Ok($"{result.Msgs}");
         }
 
         [HttpPost("{id}/encounter/flee")]

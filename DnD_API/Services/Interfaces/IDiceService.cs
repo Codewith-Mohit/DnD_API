@@ -4,6 +4,6 @@ namespace DnD_API.Services.Interfaces
 {
     public interface IDiceService
     {
-        int Roll(string formula, int? seed = null);
+        DiceRollResult Roll(string formula, int? seed = null);
     }
 }

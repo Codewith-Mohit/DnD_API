@@ -50,7 +50,7 @@ namespace DnD_API.Controllers
                 Strength = dto.Strength,
                 Dexterity = dto.Dexterity,
                 Intelligence = dto.Intelligence,
-                 Inventory = dto.Inventory
+                Inventory = dto.Inventory
             };
             
             _CharService.CreateCharacter(newCharacter);

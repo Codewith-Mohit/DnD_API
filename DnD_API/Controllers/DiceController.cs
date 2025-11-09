@@ -13,11 +13,13 @@ namespace DnD_API.Controllers
         {
             _diceService = diceService;
         }
+
+
         [HttpPost("roll")]
         public IActionResult Roll([FromBody] DiceRequest req)
         {
             var result = _diceService.Roll(req.Formula, req.Seed);
-            return Ok(new { req.Formula, req.Seed, result });
+            return Ok(result);
         }
 
         public record DiceRequest(string Formula, int? Seed);

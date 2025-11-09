@@ -2,9 +2,6 @@ using DnD_API.Data;
 using DnD_API.Services;
 using DnD_API.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,3 +30,6 @@ if (app.Environment.IsDevelopment())
 
 app.MapControllers();
 app.Run();
+
+
+public partial class Program { }
