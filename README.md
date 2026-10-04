@@ -81,40 +81,6 @@ You can test these endpoints using Swagger UI or a tool like Postman:
 
 ---
 
-## 📂 Project Structure
-
-This structure follows a typical clean architecture pattern, organizing logic and models distinctly.
-DnD_API/ 
-├── Controllers/ # API endpoints (may be converted to Minimal APIs) 
-│ ├── CharacterController.cs
-│ ├── DiceController.cs
-│ └── RunController.cs
-├── Data/ 
-│ └── DnDDbContext.cs # EF Core DbContext with InMemory setup 
-├── Models/ # Core business entities 
-│ ├── Character.cs 
-│ ├── Item.cs 
-│ ├── Run.cs 
-│ └── Room.cs, Enemy.cs, etc. 
-├── DTOs/ # Data Transfer Objects (Request/Response models) 
-│ └── CharacterCreateDto.cs 
-│ └── DiceRollRequest.cs, 
-│ └── RunCreateDto.cs
-│ └── RunExploreRequest.cs, etc. 
-└── Services/ 
-│ └──── Interfaces/ # Service contracts for Dependency Injection         
-│ │ └──── ICharacterServices.cs
-│ │ └──── IDiceService.cs
-│ │ └──── IRunStore.cs
-│ │ └──── IDungeonService.cs, etc. 
-│ └─ CharaterService.cs
-│ └─ DiceService
-│ └─ DungeonService
-│ └─ RunService
-└──────────────
-
----
-
 ## ➡️ Extending the MVP
 
 This repository is designed for easy enhancement:
